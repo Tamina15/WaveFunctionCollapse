@@ -46,11 +46,11 @@ public class Panel extends JPanel {
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         addMouseWheelListener((MouseWheelEvent e) -> {
-            //Zoom in
+            // Zoom in
             if (e.getWheelRotation() < 0) {
                 zoomFactor *= 1.1;
             }
-            //Zoom out
+            // Zoom out
             if (e.getWheelRotation() > 0) {
                 zoomFactor /= 1.1;
             }
@@ -94,7 +94,8 @@ public class Panel extends JPanel {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+                super.mouseClicked(e); // Generated from
+                // nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
             }
         });
 
@@ -131,7 +132,7 @@ public class Panel extends JPanel {
             }
         }
 
-//        cells[r.nextInt(cellsX)][r.nextInt(cellsX)].collapse(tiles.get(r.nextInt(tiles.size())));        
+        // cells[r.nextInt(cellsX)][r.nextInt(cellsX)].collapse(tiles.get(r.nextInt(tiles.size())));
     }
 
     @Override
@@ -153,7 +154,10 @@ public class Panel extends JPanel {
         for (int i = 0; i < cellsX; i++) {
             for (int j = 0; j < cellsY; j++) {
                 if (cells[i][j].isCollapse()) {
-                    g2d.drawImage(cells[i][j].getTile().getImage(), i * IMAGE_DIMENSION * scale - xOverflow * (IMAGE_DIMENSION * scale), j * IMAGE_DIMENSION * scale - yOverflow * (IMAGE_DIMENSION * scale), IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
+                    g2d.drawImage(cells[i][j].getTile().getImage(),
+                            i * IMAGE_DIMENSION * scale - xOverflow * (IMAGE_DIMENSION * scale),
+                            j * IMAGE_DIMENSION * scale - yOverflow * (IMAGE_DIMENSION * scale),
+                            IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
                 } else {
                     g2d.setColor(Color.white);
                     if (cells[i][j].isInQueue()) {
@@ -162,7 +166,9 @@ public class Panel extends JPanel {
                     if (cells[i][j].isIterate()) {
                         g2d.setColor(Color.green);
                     }
-                    g2d.drawString(cells[i][j].getOptions().size() + "", i * IMAGE_DIMENSION * scale - xOverflow * (IMAGE_DIMENSION * scale), j * IMAGE_DIMENSION * scale + IMAGE_DIMENSION - yOverflow * (IMAGE_DIMENSION * scale));
+                    g2d.drawString(cells[i][j].getOptions().size() + "",
+                            i * IMAGE_DIMENSION * scale - xOverflow * (IMAGE_DIMENSION * scale),
+                            j * IMAGE_DIMENSION * scale + IMAGE_DIMENSION - yOverflow * (IMAGE_DIMENSION * scale));
                 }
             }
         }
@@ -170,28 +176,39 @@ public class Panel extends JPanel {
 
     public void drawOptions(Graphics2D g2d) {
         for (int i = 0; i < tiles.size(); i++) {
-            g2d.drawImage(tiles.get(i).getImage(), i * IMAGE_DIMENSION * scale, 0 * IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
+            g2d.drawImage(tiles.get(i).getImage(), i * IMAGE_DIMENSION * scale, 0 * IMAGE_DIMENSION * scale,
+                    IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
         }
         for (int a = 0; a < tiles.size(); a++) {
-            g2d.drawImage(tiles.get(a).getImage(), 0 * IMAGE_DIMENSION * scale + (500 * a), 0 * IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
+            g2d.drawImage(tiles.get(a).getImage(), 0 * IMAGE_DIMENSION * scale + (500 * a), 0 * IMAGE_DIMENSION * scale,
+                    IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
             for (int i = 0; i < tiles.get(a).getUp().size(); i++) {
-                g2d.drawImage(tiles.get(a).getUp().get(i).getImage(), 0 * IMAGE_DIMENSION * scale + (500 * a), -i * IMAGE_DIMENSION * scale - (IMAGE_DIMENSION * scale), IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
+                g2d.drawImage(tiles.get(a).getUp().get(i).getImage(), 0 * IMAGE_DIMENSION * scale + (500 * a),
+                        -i * IMAGE_DIMENSION * scale - (IMAGE_DIMENSION * scale), IMAGE_DIMENSION * scale,
+                        IMAGE_DIMENSION * scale, null);
             }
             for (int i = 0; i < tiles.get(a).getRight().size(); i++) {
-                g2d.drawImage(tiles.get(a).getRight().get(i).getImage(), i * IMAGE_DIMENSION * scale + (IMAGE_DIMENSION * scale) + (500 * a), 0 * IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
+                g2d.drawImage(tiles.get(a).getRight().get(i).getImage(),
+                        i * IMAGE_DIMENSION * scale + (IMAGE_DIMENSION * scale) + (500 * a),
+                        0 * IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
             }
             for (int i = 0; i < tiles.get(a).getDown().size(); i++) {
-                g2d.drawImage(tiles.get(a).getDown().get(i).getImage(), 0 * IMAGE_DIMENSION * scale + (500 * a), i * IMAGE_DIMENSION * scale + (IMAGE_DIMENSION * scale), IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
+                g2d.drawImage(tiles.get(a).getDown().get(i).getImage(), 0 * IMAGE_DIMENSION * scale + (500 * a),
+                        i * IMAGE_DIMENSION * scale + (IMAGE_DIMENSION * scale), IMAGE_DIMENSION * scale,
+                        IMAGE_DIMENSION * scale, null);
             }
             for (int i = 0; i < tiles.get(a).getLeft().size(); i++) {
-                g2d.drawImage(tiles.get(a).getLeft().get(i).getImage(), -i * IMAGE_DIMENSION * scale - (IMAGE_DIMENSION * scale) + (500 * a), 0 * IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
+                g2d.drawImage(tiles.get(a).getLeft().get(i).getImage(),
+                        -i * IMAGE_DIMENSION * scale - (IMAGE_DIMENSION * scale) + (500 * a),
+                        0 * IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
             }
         }
     }
 
     public void drawAllTiles(Graphics2D g2d) {
         for (int i = 0; i < tiles.size(); i++) {
-            g2d.drawImage(tiles.get(i).getImage(), i * IMAGE_DIMENSION * scale, 0 * IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
+            g2d.drawImage(tiles.get(i).getImage(), i * IMAGE_DIMENSION * scale, 0 * IMAGE_DIMENSION * scale,
+                    IMAGE_DIMENSION * scale, IMAGE_DIMENSION * scale, null);
         }
     }
 
@@ -201,7 +218,7 @@ public class Panel extends JPanel {
         if (cellQueue.isEmpty()) {
             Cell c = findCellWithLowestEntropy(cells);
             if (c.isCollapse() || c.getOptions().isEmpty()) {
-//                running = false;
+                // running = false;
                 restart();
             }
             c.collapse(tiles.get(c.getOptions().get(r.nextInt(c.getOptions().size()))));
@@ -216,6 +233,7 @@ public class Panel extends JPanel {
             }
         }
     }
+
     Queue<Cell> cellQueue = new LinkedList<>();
 
     public void propagate() {
@@ -237,7 +255,8 @@ public class Panel extends JPanel {
                 up.setInQueue(true);
             }
         }
-        // add to the queue the cell to the right if it is not in queue and is not iterated
+        // add to the queue the cell to the right if it is not in queue and is not
+        // iterated
         if (x < cellsX - 1) {
             right = cells[x + 1][y];
             if (!right.isInQueue() && !right.isIterate()) {
@@ -253,7 +272,8 @@ public class Panel extends JPanel {
                 down.setInQueue(true);
             }
         }
-        // add to the queue the cell to the left if it is not in queue and is not iterated
+        // add to the queue the cell to the left if it is not in queue and is not
+        // iterated
         if (x > 0) {
             left = cells[x - 1][y];
             if (!left.isInQueue() && !left.isIterate()) {
@@ -267,7 +287,8 @@ public class Panel extends JPanel {
         }
 
         ArrayList<Integer> option = c.getOptions();
-        // Reduce this cell probability using neighbor cells only if they have been collapsed
+        // Reduce this cell probability using neighbor cells only if they have been
+        // collapsed
         collapse(up, option, 2);
         collapse(right, option, 3);
         collapse(down, option, 0);
@@ -287,7 +308,7 @@ public class Panel extends JPanel {
             for (int i = 0; i < cell.getOptions().size(); i++) {
                 ArrayList<Integer> list = new ArrayList<>();
                 Tile tile = tiles.get(cell.getOptions().get(i));
-                ArrayList<Tile> tilesThatCanBeConnected = tile.getConnection()[direction];
+                ArrayList<Tile> tilesThatCanBeConnected = tile.getConnection().get(direction);
                 tilesThatCanBeConnected.forEach((t) -> {
                     list.add(t.getIndex());
                 });

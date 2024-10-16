@@ -27,7 +27,7 @@ public class Tile {
 
     // List of tile which can be used to connect to this edge of this tile
     private ArrayList<Tile> up, right, down, left;
-    private ArrayList<Tile>[] connection;
+    private ArrayList<ArrayList<Tile>> connection;
 
     public Tile(BufferedImage image, String[] edges) {
         this(image, edges, null);
@@ -41,7 +41,11 @@ public class Tile {
         right = new ArrayList<>();
         down = new ArrayList<>();
         left = new ArrayList<>();
-        connection = new ArrayList[]{up, right, down, left};
+        connection = new ArrayList<>();
+        connection.add(up);
+        connection.add(right);
+        connection.add(down);
+        connection.add(left);
     }
 
     public void analyzeNeighbor(ArrayList<Tile> tiles) {

@@ -67,23 +67,24 @@ public class FileReader {
         ArrayList<Tile> tiles = new ArrayList<>();
         try {
             File file = new File(filePath);
-            Scanner sc = new Scanner(file);
-            String folder = sc.nextLine();
-            if (!folder.endsWith("/")) {
-                folder += "/";
-            }
-            while (sc.hasNext()) {
-                String name = sc.nextLine();
-                String options = sc.nextLine();
-                String[] array = new String[]{name, options};
-                imagesData.add(array);
-            }
-            for (int i = 0; i < imagesData.size(); i++) {
-                String[] string = imagesData.get(i);
-                String imageName = string[0];
-                String[] tileOptions = string[1].split(",");
-                BufferedImage image = ImageIO.read(new File(folder + imageName));
-                tiles.add(i, new Tile(image, tileOptions, i));
+            try (Scanner sc = new Scanner(file)) {
+                String folder = sc.nextLine();
+                if (!folder.endsWith("/")) {
+                    folder += "/";
+                }
+                while (sc.hasNext()) {
+                    String name = sc.nextLine();
+                    String options = sc.nextLine();
+                    String[] array = new String[]{name, options};
+                    imagesData.add(array);
+                }
+                for (int i = 0; i < imagesData.size(); i++) {
+                    String[] string = imagesData.get(i);
+                    String imageName = string[0];
+                    String[] tileOptions = string[1].split(",");
+                    BufferedImage image = ImageIO.read(new File(folder + imageName));
+                    tiles.add(i, new Tile(image, tileOptions, i));
+                }
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);

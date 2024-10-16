@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
@@ -63,9 +62,7 @@ public class Test {
         sb.append("src/main/resources/test/small/\n");
         sb.append("16\n");
         File folder = new File("src/main/resources/test/small");
-        String up = "", right = "", down = "", left = "";
         Map<Integer, Integer> map = Map.of(-16777216, 0, -16711936, 1);
-        int n = 0;
         for (File file : folder.listFiles()) {
             if (!file.getName().split("\\.")[1].equals("png")) {
                 continue;
@@ -88,10 +85,10 @@ public class Test {
         }
         System.out.println(sb.toString());
         File out = new File("src/main/resources/test/small/data.txt");
-        FileWriter fw = new FileWriter(out);
-        fw.write(sb.toString());
-        fw.flush();
-        fw.close();
+        try (FileWriter fw = new FileWriter(out)) {
+            fw.write(sb.toString());
+            fw.flush();
+        }
     }
 
     public static void main(String[] args) throws IOException {
