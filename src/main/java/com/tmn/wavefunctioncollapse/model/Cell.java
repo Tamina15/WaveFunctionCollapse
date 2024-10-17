@@ -1,5 +1,7 @@
 package com.tmn.wavefunctioncollapse.model;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,8 +46,26 @@ public class Cell {
         this.options.add(tile.getIndex());
     }
 
+    public void draw(Graphics2D g2d, int scaled_dimension, int baseXPosition, int baseYPosition) {
+        if (collapse) {
+            g2d.drawImage(tile.getImage(), x * baseXPosition, y * baseYPosition, scaled_dimension, scaled_dimension, null);
+        } else {
+            g2d.setColor(Color.white);
+            if (inQueue) {
+                g2d.setColor(Color.red);
+            }
+            if (iterate) {
+                g2d.setColor(Color.green);
+            }
+            int w = g2d.getFontMetrics().stringWidth(options.size() + "");
+            int h = (int) g2d.getFontMetrics().getAscent();
+            g2d.drawString(options.size() + "", x * baseXPosition + (scaled_dimension - w) / 2, y * baseYPosition + (scaled_dimension + h) / 2);
+            g2d.setColor(Color.yellow);
+        }
+    }
+
     @Override
     public String toString() {
-        return "Cell{" + "collapse=" + collapse + ", tile=" + tile + ", x=" + x + ", y=" + y + '}';
+        return "Cell{" + "x=" + x + ", y=" + y + ", collapse=" + collapse + ", tile=" + tile + '}';
     }
 }
