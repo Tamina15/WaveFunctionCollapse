@@ -1,4 +1,4 @@
-src/main/resources/white/lines
+src/main/resources/black/lines
 0.png
 0,0,0,0
 1.png
