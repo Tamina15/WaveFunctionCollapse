@@ -1,4 +1,4 @@
-package com.mycompany.wavefunctioncollapse.model;
+package com.tmn.wavefunctioncollapse.model;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

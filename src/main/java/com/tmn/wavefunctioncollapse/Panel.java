@@ -1,8 +1,8 @@
-package com.mycompany.wavefunctioncollapse;
+package com.tmn.wavefunctioncollapse;
 
-import com.mycompany.wavefunctioncollapse.util.FileReader;
-import com.mycompany.wavefunctioncollapse.model.Cell;
-import com.mycompany.wavefunctioncollapse.model.Tile;
+import com.tmn.wavefunctioncollapse.util.FileReader;
+import com.tmn.wavefunctioncollapse.model.Cell;
+import com.tmn.wavefunctioncollapse.model.Tile;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;

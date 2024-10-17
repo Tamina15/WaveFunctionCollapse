@@ -1,4 +1,4 @@
-package com.mycompany.wavefunctioncollapse.util;
+package com.tmn.wavefunctioncollapse.util;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

@@ -1,4 +1,4 @@
-package com.mycompany.wavefunctioncollapse.util;
+package com.tmn.wavefunctioncollapse.util;
 
 /**
  *
@@ -8,6 +8,22 @@ public class SmoothStep {
 
     public static final long FACTORIAL[] = new long[]{1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800L, 87178291200L, 1307674368000L, 20922789888000L, 355687428096000L, 6402373705728000L, 121645100408832000L, 2432902008176640000L,};
     public static final int FACTORIAL_LENGTH = FACTORIAL.length;
+
+    public static double generalSmoothstep(int N, double x) {
+        return generalSmoothstep(N, x, 0, 1);
+    }
+
+    public static double smoothStep(double x) {
+        return smoothStep(x, 0, 1);
+    }
+
+    public static double smootherStep(double x) {
+        return smootherStep(x, 0, 1);
+    }
+
+    public static double s4Step(double x) {
+        return s4Step(x, 0, 1);
+    }
 
     public static double generalSmoothstep(int N, double x, double l, double r) {
         x = clamp((x - l) / (r - l), l, r);
@@ -32,22 +48,17 @@ public class SmoothStep {
 
     public static double s4Step(double x, double l, double r) {
         x = clamp((x - l) / (r - l), l, r);
-        return 70 * Math.pow(x, 9) - 315
-                * Math.pow(x, 8) + 540
-                * Math.pow(x, 7) - 420
-                * Math.pow(x, 6) + 126
-                * Math.pow(x, 5);
+        return 70 * Math.pow(x, 9) - 315 * Math.pow(x, 8) + 540 * Math.pow(x, 7) - 420 * Math.pow(x, 6) + 126 * Math.pow(x, 5);
     }
 
     public static double clamp(double x, double l, double r) {
-        return x < l ? l : x > r ? r : x;
-//        if (x < l) {
-//            return l;
-//        }
-//        if (x > r) {
-//            return r;
-//        }
-//        return x;
+        if (x < l) {
+            return l;
+        }
+        if (x > r) {
+            return r;
+        }
+        return x;
     }
 
     /*
@@ -66,7 +77,7 @@ public class SmoothStep {
     public static double binomialCoefficient(int n, int k) {
         double result = 1;
         for (int i = 1; i <= k; i++) { // avoid divided by zero
-            result *= (n - i + 1) / i;
+            result *= (n - i + 1) * 1.0 / i;
         }
         return result;
     }
@@ -74,4 +85,5 @@ public class SmoothStep {
     public static double inverseSmoothstep(double x) {
         return 0.5 - Math.sin(Math.asin(1.0 - 2.0 * x) / 3.0);
     }
+
 }
