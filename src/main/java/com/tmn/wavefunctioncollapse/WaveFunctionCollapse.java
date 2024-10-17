@@ -93,28 +93,31 @@ public class WaveFunctionCollapse {
         }
     }
 
+    public void fullWavePropagate() {
+        int n = cellQueue.size();
+        while (n > 0) {
+            stepByStepPropagate(cellQueue);
+            n--;
+        }
+    }
+
     public void stepByStepPropagate(Queue<Cell> queue) {
         Cell c = queue.poll();
         int x = c.getX();
         int y = c.getY();
         Cell up = null, left = null, down = null, right = null;
-
         if (y > 0) {
             up = cells[x][y - 1];
         }
-
         if (x < cellsX - 1) {
             right = cells[x + 1][y];
         }
-
         if (y < cellsY - 1) {
             down = cells[x][y + 1];
         }
-
         if (x > 0) {
             left = cells[x - 1][y];
         }
-
         addToQueue(queue, up, right, down, left);
 
         if (c.isCollapse() || c.isIterate()) {
