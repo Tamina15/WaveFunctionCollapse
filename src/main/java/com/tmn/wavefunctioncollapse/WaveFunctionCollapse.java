@@ -1,4 +1,4 @@
-package com.mycompany.wavefunctioncollapse;
+package com.tmn.wavefunctioncollapse;
 
 import javax.swing.JFrame;
 

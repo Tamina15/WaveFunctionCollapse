@@ -1,4 +1,4 @@
-package com.mycompany.wavefunctioncollapse.model;
+package com.tmn.wavefunctioncollapse.model;
 
 import java.util.ArrayList;
 import lombok.Getter;

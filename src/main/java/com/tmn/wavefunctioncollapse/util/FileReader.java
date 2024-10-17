@@ -1,6 +1,6 @@
-package com.mycompany.wavefunctioncollapse.util;
+package com.tmn.wavefunctioncollapse.util;
 
-import com.mycompany.wavefunctioncollapse.model.Tile;
+import com.tmn.wavefunctioncollapse.model.Tile;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -95,7 +95,7 @@ public class FileReader {
     }
 
     public static void main(String[] args) {
-        markImage("src/main/resources/test/small/", "src/main/resources/test/small");
+//        markImage("src/main/resources/test/small/", "src/main/resources/test/small");
         readImageData("src/main/resources/test/small/data.txt");
     }
 }
