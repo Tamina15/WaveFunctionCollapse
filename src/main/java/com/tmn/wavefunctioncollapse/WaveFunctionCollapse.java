@@ -10,7 +10,6 @@ import java.util.Random;
 import lombok.Getter;
 import lombok.Setter;
 
-
 /**
  *
  * @author nhat.tranminh
@@ -94,6 +93,14 @@ public class WaveFunctionCollapse {
         }
     }
 
+    public void fullWavePropagate() {
+        int n = cellQueue.size();
+        while (n > 0) {
+            stepByStepPropagate(cellQueue);
+            n--;
+        }
+    }
+  
     public void stepByStepPropagate(Queue<Cell> queue) {
         Cell c = queue.poll();
         int x = c.getX();
@@ -103,15 +110,12 @@ public class WaveFunctionCollapse {
         if (y > 0) {
             up = cells[x][y - 1];
         }
-
         if (x < cellsX - 1) {
             right = cells[x + 1][y];
         }
-
         if (y < cellsY - 1) {
             down = cells[x][y + 1];
         }
-
         if (x > 0) {
             left = cells[x - 1][y];
         }
