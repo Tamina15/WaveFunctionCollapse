@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 import lombok.Getter;
 import lombok.Setter;
 
-
 /**
  *
  * @author nhat.tranminh
@@ -30,6 +29,7 @@ public class WaveFunctionCollapse {
     public boolean running = true;
     public int runNTimes = 1;
     public boolean updateType;
+
     private final ArrayList<Tile> tiles;
     private Cell[][] cells;
     private int cellsX, cellsY;
@@ -57,16 +57,15 @@ public class WaveFunctionCollapse {
                 }
             }
         }
-        System.out.println("Tiles size:" + tiles.size());
 
         // Analyze all tiles for possible neighbor tiles
-        for (Tile tile : tiles) {
-            tile.analyzeNeighbor(tiles);
-        }
+        tiles.forEach((tile) -> tile.analyzeNeighbor(tiles));
+
         this.xOverflow = xOverflow;
         this.yOverflow = yOverflow;
         this.cellsX = cellX + 2 * xOverflow;
         this.cellsY = cellY + 2 * yOverflow;
+
         cells = new Cell[cellsX][cellsY];
         for (int i = 0; i < cellsX; i++) {
             for (int j = 0; j < cellsY; j++) {
@@ -74,7 +73,8 @@ public class WaveFunctionCollapse {
             }
         }
 
-        // cells[r.nextInt(cellsX)][r.nextInt(cellsX)].collapse(tiles.get(r.nextInt(tiles.size())));
+//        cells[1][1].collapse(tiles.get(0));
+//        cellQueue.add(cells[1][1]);
     }
 
     public void update() {
@@ -106,87 +106,83 @@ public class WaveFunctionCollapse {
         }
     }
 
+    public void fullWavePropagate() {
+        int n = cellQueue.size();
+        while (n > 0) {
+            stepByStepPropagate(cellQueue);
+            n--;
+        }
+    }
+
     public void stepByStepPropagate(Queue<Cell> queue) {
-        Cell c = queue.poll();
-        int x = c.getX();
-        int y = c.getY();
-        Cell up = null, left = null, down = null, right = null;
-
-        if (y > 0) {
-            up = cells[x][y - 1];
-        }
-
-        if (x < cellsX - 1) {
-            right = cells[x + 1][y];
-        }
-
-        if (y < cellsY - 1) {
-            down = cells[x][y + 1];
-        }
-
-        if (x > 0) {
-            left = cells[x - 1][y];
-        }
-
-        addToQueue(queue, up, right, down, left);
-
-        if (c.isCollapse() || c.isIterate()) {
+        Cell cell = queue.poll();
+        Cell[] neighbors = getNeighborCells(cell);
+        addToQueue(queue, neighbors);
+        if (cell.isCollapsed() || cell.isIterated()) {
             return;
         }
 
-        ArrayList<Integer> option = c.getOptions();
-        option = reducePossibility(option, up, 2);
-        option = reducePossibility(option, right, 3);
-        option = reducePossibility(option, down, 0);
-        option = reducePossibility(option, left, 1);
-
-        if (option.size() == 1) {
-            c.collapse(tiles.get(option.get(0)));
+        /* 
+        This could cause problem with restrained knot tileset
+        See BEFORE section: https://github.com/mxgmn/WaveFunctionCollapse?tab=readme-ov-file#higher-dimensions
+        Issue: Backtracking when stuck
+        */
+        if (cell.getTileIndexes().size() == 1) {
+            cell.collapse(tiles.get(cell.getTileIndexes().get(0)));
         } else {
-            c.setOptions(option);
+            reducePossibility(cell, neighbors);
         }
-        c.setIterate(true);
-        c.setInQueue(true);
+        cell.setIterated(true);
+        cell.setInQueued(true);
     }
 
     public void shortenStepByStepPropagate(Queue<Cell> queue) {
-        Cell c = queue.poll();
-        int x = c.getX();
-        int y = c.getY();
+        Cell cell = queue.poll();
+        Cell[] neighbors = getNeighborCells(cell);
+        if (cell.isCollapsed() || cell.isIterated()) {
+            addToQueue(queue, neighbors);
+            return;
+        }
+        ArrayList<Integer> option = cell.getTileIndexes();
+        int optionLength = option.size();
+        reducePossibility(cell, neighbors);
 
-        Cell[] neighbors = new Cell[4];
+        cell.setIterated(true);
+        cell.setInQueued(true);
+
+        if (option.size() == 1) {
+            cell.collapse(tiles.get(option.get(0)));
+        }
+        if (option.size() == optionLength) {
+            return;
+        }
+        addToQueue(queue, neighbors);
+        cell.setTileIndexes(option);
+    }
+
+    /* TODO: use XMask and YMask to get neighbor cells
+            Cell[] neighbors = new Cell[4];
         for (int i = 0; i < neighbors.length; i++) {
             try {
                 neighbors[i] = cells[x + xMask[i]][y + yMask[i]];
             } catch (ArrayIndexOutOfBoundsException e) {
             }
         }
-        Cell up = neighbors[0], right = neighbors[1], down = neighbors[2], left = neighbors[3];
-
-        if (c.isCollapse() || c.isIterate()) {
-            addToQueue(queue, up, right, down, left);
-            return;
-        }
-
-        ArrayList<Integer> option = c.getOptions();
-        int optionLength = option.size();
-        // Reduce this cell probability using neighbor cells only if they have been collapsed
-        option = reducePossibility(option, up, 2);
-        option = reducePossibility(option, right, 3);
-        option = reducePossibility(option, down, 0);
-        option = reducePossibility(option, left, 1);
-
-        c.setIterate(true);
-        c.setInQueue(true);
-
-        if (option.size() == 1) {
-            c.collapse(tiles.get(option.get(0)));
-        }
-        if (option.size() == optionLength) {
-            return;
-        }
-        addToQueue(queue, up, right, down, left);
-        c.setOptions(option);
+     */
+    private Cell[] getNeighborCells(Cell cell) {
+        int x = cell.getX();
+        int y = cell.getY();
+        /*
+        Cell up    = y > 0          ? cells[x]    [y - 1] : null;
+        Cell right = x < cellsX - 1 ? cells[x + 1][y]     : null;
+        Cell down  = y < cellsY - 1 ? cells[x]    [y + 1] : null;
+        Cell left  = x > 0          ? cells[x - 1][y]     : null;
+         */
+        Cell up = y > 0 ? cells[x][y - 1] : null;
+        Cell right = x < cellsX - 1 ? cells[x + 1][y] : null;
+        Cell down = y < cellsY - 1 ? cells[x][y + 1] : null;
+        Cell left = x > 0 ? cells[x - 1][y] : null;
+        return new Cell[]{up, right, down, left};
     }
 
     private void addToQueue(Queue<Cell> queue, Cell... cells) {
@@ -198,19 +194,20 @@ public class WaveFunctionCollapse {
         }
     }
 
-    public ArrayList<Integer> reducePossibility(ArrayList<Integer> options, Cell cell, int direction) {
-        if (cell != null && cell.isCollapse()) {
-            for (int i = 0; i < cell.getOptions().size(); i++) {
+    public void reducePossibility(Cell thisCell, Cell[] neighbors) {
+        ArrayList<Integer> tileIndexes = thisCell.getTileIndexes();
+        for (int i = 0; i < neighbors.length; i++) {
+            Cell neighbor = neighbors[i];
+            if (neighbor != null && neighbor.isCollapsed()) {
                 ArrayList<Integer> list = new ArrayList<>();
-                Tile tile = tiles.get(cell.getOptions().get(i));
-                ArrayList<Tile> tilesThatCanBeConnected = tile.getConnection().get(direction);
+                Tile tile = neighbor.getTile();
+                ArrayList<Tile> tilesThatCanBeConnected = tile.getNeighbors()[Tile.inverseNeighborsIndex[i]];
                 tilesThatCanBeConnected.forEach((t) -> {
                     list.add(t.getIndex());
                 });
-                options.retainAll(list);
+                tileIndexes.retainAll(list);
             }
         }
-        return options;
     }
 
     private Cell findCellWithLowestEntropy(Cell[][] cells) {
