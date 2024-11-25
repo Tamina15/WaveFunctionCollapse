@@ -1,14 +1,10 @@
 package com.tmn.wavefunctioncollapse.util;
 
-import com.tmn.wavefunctioncollapse.model.Tile;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -60,42 +56,5 @@ public class FileReader {
         } catch (IOException ex) {
             Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public static ArrayList<Tile> readImageData(String filePath) {
-        ArrayList<String[]> imagesData = new ArrayList<>();
-        ArrayList<Tile> tiles = new ArrayList<>();
-        try {
-            File file = new File(filePath);
-            try (Scanner sc = new Scanner(file)) {
-                String folder = sc.nextLine();
-                if (!folder.endsWith("/")) {
-                    folder += "/";
-                }
-                while (sc.hasNext()) {
-                    String name = sc.nextLine();
-                    String options = sc.nextLine();
-                    String[] array = new String[]{name, options};
-                    imagesData.add(array);
-                }
-                for (int i = 0; i < imagesData.size(); i++) {
-                    String[] string = imagesData.get(i);
-                    String imageName = string[0];
-                    String[] tileOptions = string[1].split(",");
-                    BufferedImage image = ImageIO.read(new File(folder + imageName));
-                    tiles.add(i, new Tile(image, tileOptions, i));
-                }
-            }
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return tiles;
-    }
-
-    public static void main(String[] args) {
-//        markImage("src/main/resources/test/small/", "src/main/resources/test/small");
-        readImageData("src/main/resources/test/small/data.txt");
     }
 }

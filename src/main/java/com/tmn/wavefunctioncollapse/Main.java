@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         Frame f = new Frame();
         WaveFunctionCollapse wfc = new WaveFunctionCollapse(n, n, 0, 0);
-        Panel p = new Panel(Panel.IMAGE_DIMENSION * n, Panel.IMAGE_DIMENSION * n);
+        Panel p = new Panel(WaveFunctionCollapse.IMAGE_DIMENSION * n, WaveFunctionCollapse.IMAGE_DIMENSION * n);
         p.setWaveFunctionCollapse(wfc);
         f.add(p);
         f.pack();
@@ -23,7 +23,7 @@ public class Main {
             updatedelta += (currentTime - lastTime) / updateInterval;
             lastTime = currentTime;
             if (delta >= 1) {
-                p.repaint();
+                f.repaint();
                 delta--;
             }
             if (updatedelta >= 1) {
