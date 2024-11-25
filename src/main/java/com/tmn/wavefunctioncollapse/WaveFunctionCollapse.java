@@ -67,14 +67,14 @@ public class WaveFunctionCollapse {
 
     public void update() {
         if (cellQueue.isEmpty()) {
-            Cell c = findCellWithLowestEntropy(cells);
-            if (c.isCollapse() || c.getOptions().isEmpty()) {
-//                running = false;
-                restart();
+            Cell cell = findCellWithLowestEntropy(cells);
+            if (cell.isCollapsed() || cell.getTileIndexes().isEmpty()) {
+                running = false;
+                return;
             }
-            c.collapse(tiles.get(c.getOptions().get(r.nextInt(c.getOptions().size()))));
+            cell.collapse(tiles.get(cell.getTileIndexes().get(r.nextInt(cell.getTileIndexes().size()))));
             resetCells();
-            cellQueue.add(c);
+            cellQueue.add(cell);
         }
         if (running) {
             if (updateType) {
@@ -179,9 +179,9 @@ public class WaveFunctionCollapse {
 
     private void addToQueue(Queue<Cell> queue, Cell... cells) {
         for (Cell c : cells) {
-            if (c != null && !c.isInQueue() && !c.isIterate() && !c.isCollapse()) {
+            if (c != null && !c.isInQueued() && !c.isIterated() && !c.isCollapsed()) {
                 queue.add(c);
-                c.setInQueue(true);
+                c.setInQueued(true);
             }
         }
     }
@@ -205,13 +205,13 @@ public class WaveFunctionCollapse {
         Cell min = cells[r.nextInt(cellsX)][r.nextInt(cellsY)];
         for (Cell[] cell : cells) {
             for (Cell c : cell) {
-                if (c.isCollapse()) {
+                if (c.isCollapsed()) {
                     continue;
                 }
-                if (min.isCollapse() && !c.isCollapse()) {
+                if (min.isCollapsed() && !c.isCollapsed()) {
                     min = c;
                 } else {
-                    if (min.getOptions().size() > c.getOptions().size()) {
+                    if (min.getTileIndexes().size() > c.getTileIndexes().size()) {
                         min = c;
                     }
                 }
@@ -223,9 +223,9 @@ public class WaveFunctionCollapse {
     public void resetCells() {
         for (Cell[] cell : cells) {
             for (Cell c : cell) {
-                if (!c.isCollapse()) {
-                    c.setInQueue(false);
-                    c.setIterate(false);
+                if (!c.isCollapsed()) {
+                    c.setInQueued(false);
+                    c.setIterated(false);
                 }
             }
         }

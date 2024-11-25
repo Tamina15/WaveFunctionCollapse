@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,8 @@ public class Tile {
     private Integer index;
     private BufferedImage image;
     /*
-    * Egde code, indicate which tile can be connect to which faces of this tile
+    * Egdes code, indicate which tile can be connect to which faces of this tile
+        eg.    
         index 0: up, north
         index 1: right, east
         index 2: down, south
@@ -24,47 +26,43 @@ public class Tile {
      */
     private String[] edges;
 
-    // List of tile which can be used to connect to this edge of this tile
-    private ArrayList<Tile> up, right, down, left;
-    private ArrayList<ArrayList<Tile>> connection;
+    // List of tiles which can be used to connect to this edge of this tile
+    // edges[i] will have neighbors[i] and inverse of that neighbor at edge[inverseNeighborsIndex[i]]
+    private ArrayList<Tile>[] neighbors;
+
+    // TODO: Read this from file
+    public static final int[] inverseNeighborsIndex = new int[]{2, 3, 0, 1};
 
     public Tile(BufferedImage image, String[] edges) {
-        this(image, edges, null);
+        this(null, image, edges);
     }
 
-    public Tile(BufferedImage image, String[] edges, Integer index) {
+    public Tile(Integer index, BufferedImage image, String[] edges) {
+        this.index = index;
         this.image = image;
         this.edges = edges;
-        this.index = index;
-        up = new ArrayList<>();
-        right = new ArrayList<>();
-        down = new ArrayList<>();
-        left = new ArrayList<>();
-        connection = new ArrayList<>();
-        connection.add(up);
-        connection.add(right);
-        connection.add(down);
-        connection.add(left);
+        neighbors = new ArrayList[this.edges.length];
+        for (int i = 0; i < neighbors.length; i++) {
+            neighbors[i] = new ArrayList<>();
+        }
     }
 
+    // check all edges against a list of tiles 
+    // to see which tiles has edges that can connect with this edge
     public void analyzeNeighbor(ArrayList<Tile> tiles) {
-        for (int i = 0; i < tiles.size(); i++) {
-            Tile tile = tiles.get(i);
-            // UP
-            if (compareEdge(tile.edges[2], this.edges[0])) {
-                this.up.add(tile);
-            }
-            // RIGHT
-            if (compareEdge(tile.edges[3], this.edges[1])) {
-                this.right.add(tile);
-            }
-            // DOWN
-            if (compareEdge(tile.edges[0], this.edges[2])) {
-                this.down.add(tile);
-            }
-            // LEFT
-            if (compareEdge(tile.edges[1], this.edges[3])) {
-                this.left.add(tile);
+        // for all edges of this tile
+        for (int i = 0; i < edges.length; i++) {
+            // prepare the edge and the neighbor list
+            String edge = edges[i];
+            ArrayList<Tile> neighbor = neighbors[i];
+            // match against all tiles
+            for (int j = 0; j < tiles.size(); j++) {
+                // get the tile
+                Tile tile = tiles.get(j);
+                // compare between this edge and the inverse of this edge of the outside tile
+                if (compareEdge(edge, tile.getEdges()[inverseNeighborsIndex[i]])) {
+                    neighbor.add(tile);
+                }
             }
         }
     }
@@ -96,7 +94,7 @@ public class Tile {
         return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
     }
 
-    private boolean compareEdge(String a, String b) {
+    private static boolean compareEdge(String a, String b) {
         return new StringBuilder(b).reverse().toString().equals(a);
     }
 
@@ -136,6 +134,11 @@ public class Tile {
         }
         final Tile other = (Tile) obj;
         return Objects.equals(this.getEdgesAsString(), other.getEdgesAsString());
+    }
+
+    @Override
+    public String toString() {
+        return "Tile{" + "index=" + index + ", edges=" + Arrays.toString(edges) + '}';
     }
 
 }
