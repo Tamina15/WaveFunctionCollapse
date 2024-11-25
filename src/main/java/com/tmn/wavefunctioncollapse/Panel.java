@@ -24,7 +24,6 @@ public class Panel extends JPanel {
     double updatetime = 0;
     WaveFunctionCollapse wfc;
 
-
     public Panel(int width, int height) {
         this.width = width;
         this.height = height;
