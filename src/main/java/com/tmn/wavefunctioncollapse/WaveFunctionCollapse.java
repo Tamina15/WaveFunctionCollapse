@@ -3,10 +3,18 @@ package com.tmn.wavefunctioncollapse;
 import com.tmn.wavefunctioncollapse.model.Cell;
 import com.tmn.wavefunctioncollapse.model.Tile;
 import com.tmn.wavefunctioncollapse.util.FileReader;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,11 +36,15 @@ public class WaveFunctionCollapse {
     public static final int[] xMask = new int[]{0, 1, 0, -1};
     public static final int[] yMask = new int[]{-1, 0, 1, 0};
     private int xOverflow, yOverflow;
-    static final String IMAGE_PATH = "src/main/resources/black/lines/data.txt";
+
+    public static final int IMAGE_DIMENSION = 15;
+    public static final String IMAGE_PATH = "src/main/resources/black/lines/data.txt";
+
     private final Random r = new Random();
 
     public WaveFunctionCollapse(int cellX, int cellY, int xOverflow, int yOverflow) {
-        this.tiles = FileReader.readImageData(IMAGE_PATH);
+        this.tiles = ImageReader.readImageData(IMAGE_PATH);
+
         // Spin the tiles
         int initialTileCount = tiles.size();
         for (int i = 0; i < initialTileCount; i++) {
@@ -252,10 +264,34 @@ public class WaveFunctionCollapse {
     }
 
     public void decreaseRunTimes() {
-        if (runNTimes > 0) {
-            runNTimes--;
-            return;
+        runNTimes = runNTimes > 0 ? runNTimes - 1 : 0;
+    }
+
+}
+
+class ImageReader {
+
+    public static ArrayList<Tile> readImageData(String filePath) {
+        ArrayList<Tile> tiles = new ArrayList<>();
+        try {
+            File file = new File(filePath);
+            try (Scanner sc = new Scanner(file)) {
+                String imageSourceFolder = sc.nextLine();
+                if (!imageSourceFolder.endsWith("/")) {
+                    imageSourceFolder += "/";
+                }
+                for (int i = 0; sc.hasNext(); i++) {
+                    String imageName = sc.nextLine();
+                    String[] tileOptions = sc.nextLine().split(",");
+                    BufferedImage image = ImageIO.read(new File(imageSourceFolder + imageName));
+                    tiles.add(i, new Tile(i, image, tileOptions));
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE, null, ex);
         }
-        runNTimes = 0;
+        return tiles;
     }
 }
