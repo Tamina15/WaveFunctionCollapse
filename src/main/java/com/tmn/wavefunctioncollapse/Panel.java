@@ -16,56 +16,36 @@ import javax.swing.SwingUtilities;
 public class Panel extends JPanel {
 
     private final int width, height;
-    private Point origin = new Point(0, 0);
-    private Point mousePt = new Point(0, 0);
-    private double zoomFactor = 1;
+    private final Point origin = new Point(0, 0);
+    private final Point oldOrigin = new Point(0, 0);
+    private final Point mousePt = new Point(0, 0);
+    private double zoomFactor = 1, zoomMutiplier = 1.05;
     private int scale = 1;
-    double updatetime = 0;
+    double updateTime = 0;
     WaveFunctionCollapse wfc;
 
     public Panel(int width, int height) {
         this.width = width;
         this.height = height;
-        origin = new Point(width * 0 / 2, height * 0 / 2);
         this.setPreferredSize(new Dimension(width, height));
         this.setDoubleBuffered(true);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
-        addMouseWheelListener((MouseWheelEvent e) -> {
-            // Zoom in
-            if (e.getWheelRotation() < 0) {
-                zoomFactor *= 1.1;
-            }
-            // Zoom out
-            if (e.getWheelRotation() > 0) {
-                zoomFactor /= 1.1;
-            }
-        });
-        this.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                int dx = (e.getX() - mousePt.x) * scale;
-                int dy = (e.getY() - mousePt.y) * scale;
-                mousePt.setLocation(e.getX(), e.getY());
-                origin.setLocation(origin.getX() + dx, origin.getY() + dy);
-            }
-        });
+
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
-                    mousePt.setLocation(e.getPoint());
+                    setAnchorPoint(e);
                     if (e.isShiftDown()) {
-//                        wfc.reverseRunning();
-                        wfc.update();
+                        wfc.reverseRunning();
                     }
                 }
                 if (SwingUtilities.isRightMouseButton(e)) {
-                    if (!e.isAltDown()) {
-                        wfc.increaseRunTimes();
-                    }
                     if (e.isAltDown()) {
                         wfc.decreaseRunTimes();
+                    } else {
+                        wfc.increaseRunTimes();
                     }
                 }
                 if (SwingUtilities.isMiddleMouseButton(e)) {
@@ -73,15 +53,44 @@ public class Panel extends JPanel {
                 }
             }
 
+        });
+        this.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e); // Generated from
-                // nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+            public void mouseDragged(MouseEvent e) {
+                move(e);
             }
         });
+        this.addMouseWheelListener((MouseWheelEvent e) -> {
+            zoom(e);
+        });
+
         cellx = width / IMAGE_DIMENSION;
         celly = height / IMAGE_DIMENSION;
+
     }
+
+    private void setAnchorPoint(MouseEvent e) {
+        oldOrigin.setLocation(origin);
+        mousePt.setLocation(e.getPoint());
+    }
+
+    private void move(MouseEvent e) {
+        double dx = ((e.getX() - mousePt.x));
+        double dy = ((e.getY() - mousePt.y));
+        origin.setLocation(oldOrigin.getX() + dx, oldOrigin.getY() + dy);
+    }
+
+    private void zoom(MouseWheelEvent e) {
+        // Zoom in
+        if (e.getWheelRotation() < 0) {
+            zoomFactor *= zoomMutiplier;
+        }
+        // Zoom out
+        if (e.getWheelRotation() > 0) {
+            zoomFactor /= zoomMutiplier;
+        }
+    }
+
     int cellx;
     int celly;
 
@@ -89,15 +98,15 @@ public class Panel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.scale(zoomFactor, zoomFactor);
         g2d.translate(origin.x, origin.y);
+        g2d.scale(zoomFactor, zoomFactor);
+
         g2d.setColor(Color.white);
         drawCell(g2d);
-//        g2d.setColor(Color.black);
-//        g2d.fillRect(0, 0, 50, 30);
-//        g2d.setColor(Color.white);
-//        g2d.drawString(String.format("%.4f", updatetime), 10, 20);
-//        g2d.drawString(updatetime + " ms", 10, 20);
+        g2d.setColor(Color.black);
+        g2d.fillRect(0, 0, 50, 30);
+        g2d.setColor(Color.white);
+        g2d.drawString(updateTime + " ms", 10, 20);
 //        drawOptions(g2d);
     }
 
@@ -148,6 +157,7 @@ public class Panel extends JPanel {
             }
         }
     }
+
     public void drawAllTiles(Graphics2D g2d) {
         for (int i = 0; i < wfc.getTiles().size(); i++) {
             g2d.drawImage(wfc.getTiles().get(i).getImage(), i * scaled_dimension, 0 * scaled_dimension,
