@@ -26,7 +26,7 @@ public class SmoothStep {
     }
 
     public static double generalSmoothstep(int N, double x, double l, double r) {
-        x = clamp((x - l) / (r - l), l, r);
+        x = Math.clamp((x - l) / (r - l), l, r);
         double result = 0;
         for (int n = 0; n <= N; n++) {
             result += binomialCoefficient(-N - 1, n)
@@ -37,28 +37,18 @@ public class SmoothStep {
     }
 
     public static double smoothStep(double x, double l, double r) {
-        x = clamp((x - l) / (r - l), l, r);
+        x = Math.clamp((x - l) / (r - l), l, r);
         return x * x * (3.0 - 2.0 * x);
     }
 
     public static double smootherStep(double x, double l, double r) {
-        x = clamp((x - l) / (r - l), l, r);
+        x = Math.clamp((x - l) / (r - l), l, r);
         return x * x * x * (x * (6.0f * x - 15.0f) + 10.0f);
     }
 
     public static double s4Step(double x, double l, double r) {
-        x = clamp((x - l) / (r - l), l, r);
+        x = Math.clamp((x - l) / (r - l), l, r);
         return 70 * Math.pow(x, 9) - 315 * Math.pow(x, 8) + 540 * Math.pow(x, 7) - 420 * Math.pow(x, 6) + 126 * Math.pow(x, 5);
-    }
-
-    public static double clamp(double x, double l, double r) {
-        if (x < l) {
-            return l;
-        }
-        if (x > r) {
-            return r;
-        }
-        return x;
     }
 
     /*
